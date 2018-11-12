@@ -15,10 +15,10 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}
-      {{ if eq .Values.env "staging" -}}
+      {{- if eq .Values.env "staging" }}
       annotations:
         iam.amazonaws.com/role: {{ .Values.assume_role }}
-      {{ end -}}
+      {{- end }}
     spec:
       containers:
         - name: {{ .Values.name }}
@@ -32,11 +32,15 @@ spec:
             - containerPort: 8000
           command: ['/bin/sh']
           {{ if eq .Values.env "staging" -}}
-          args: ["-c", "cp /etc/secrets-volume/env /code/mozillians/.env && /code/bin/run-dev-preview.sh"]
+          args: ["-c", "/code/bin/run-k8s.sh run-prod"]
+          volumeMounts:
+          - name: secret-volume
+            readOnly: true
+            mountPath: "/etc/secrets-volume"
           {{- else -}}
           args: ["-c", "/code/bin/run-dev-preview.sh"]
-          {{- end }}
-          {{ if eq .Values.env "dev" -}}
+          {{- end -}}
+          {{ if eq .Values.env "dev" }}
           tty: true
           stdin: true
           envFrom:
@@ -46,10 +50,9 @@ spec:
             - name: DUMMY_TIMESTAMP
               value: "{{ now.Unix }}"
           {{- end }}
-      {{ if eq .Values.env "staging" -}}
+      {{- if eq .Values.env "staging" }}
       volumes:
-        - name: secret-volume
-          readOnly: true
-          secret:
-            secretName: mozillians-dev
+      - name: secret-volume
+        secret:
+          secretName: mozillians-env
       {{- end }}

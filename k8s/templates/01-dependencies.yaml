@@ -15,10 +15,10 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}-celery
-      {{ if eq .Values.env "staging" -}}
+      {{- if eq .Values.env "staging" }}
       annotations:
         iam.amazonaws.com/role: {{ .Values.assume_role }}
-      {{ end -}}
+      {{- end }}
     spec:
       containers:
         - name: {{ .Values.name }}-celery
@@ -28,13 +28,28 @@ spec:
           {{- else -}}
           imagePullPolicy: Always
           {{- end }}
-          command: ['./bin/run-celery.sh']
+          command: ["/bin/sh"]
+          {{ if eq .Values.env "staging" -}}
+          args: ["-c", "/code/bin/run-k8s.sh celery"]
+          volumeMounts:
+          - name: secret-volume
+            readOnly: true
+            mountPath: "/etc/secrets-volume"
+          {{- else -}}
+          args: ["-c", "/code/bin/run-celery.sh"]
+          {{- end }}
           env:
             - name: C_FORCE_ROOT
               value: 'true'
           envFrom:
             - configMapRef:
                 name: {{ .Values.config_map }}
+      {{- if eq .Values.env "staging" }}
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: mozillians-env
+      {{- end }}
 
 ---
 apiVersion: apps/v1
@@ -53,10 +68,10 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}-celery-beat
-      {{ if eq .Values.env "staging" -}}
+      {{- if eq .Values.env "staging" }}
       annotations:
         iam.amazonaws.com/role: {{ .Values.assume_role }}
-      {{ end -}}
+      {{- end }}
     spec:
       containers:
         - name: {{ .Values.name }}-celery-beat
@@ -66,11 +81,26 @@ spec:
           {{- else -}}
           imagePullPolicy: Always
           {{- end }}
-          command: ['./bin/run-celery-beat.sh']
+          command: ["/bin/sh"]
+          {{ if eq .Values.env "staging" -}}
+          args: ["-c", "/code/bin/run-k8s.sh celery-beat"]
+          volumeMounts:
+          - name: secret-volume
+            readOnly: true
+            mountPath: "/etc/secrets-volume"
+          {{- else -}}
+          args: ["-c", "/code/bin/run-celery-beat.sh"]
+          {{- end }}
           env:
             - name: C_FORCE_ROOT
               value: 'true'
           envFrom:
             - configMapRef:
                 name: {{ .Values.config_map }}
+      {{- if eq .Values.env "staging" }}
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: mozillians-env
+      {{- end }}
 

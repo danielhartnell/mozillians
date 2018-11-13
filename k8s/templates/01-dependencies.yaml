@@ -29,7 +29,7 @@ spec:
           args: ["-c", "/code/bin/run-k8s.sh celery"]
           {{- else -}}
           args: ["-c", "/code/bin/run-celery.sh"]
-          {{- end }}
+          {{- end -}}
           {{ if eq .Values.env "dev" -}}
           env:
             - name: C_FORCE_ROOT
@@ -82,7 +82,7 @@ spec:
           args: ["-c", "/code/bin/run-k8s.sh celery-beat"]
           {{- else -}}
           args: ["-c", "/code/bin/run-celery-beat.sh"]
-          {{- end }}
+          {{- end -}}
           {{ if eq .Values.env "dev" -}}
           env:
             - name: C_FORCE_ROOT

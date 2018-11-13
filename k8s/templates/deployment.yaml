@@ -31,7 +31,7 @@ spec:
           args: ["-c", "/code/bin/run-k8s.sh run-prod"]
           {{- else -}}
           args: ["-c", "/code/bin/run-dev-preview.sh"]
-          {{- end }}
+          {{- end -}}
           {{ if eq .Values.env "dev" -}}
           tty: true
           stdin: true

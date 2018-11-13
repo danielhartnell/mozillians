@@ -28,7 +28,7 @@ spec:
             - containerPort: 8000
           command: ['/bin/sh']
           {{ if eq .Values.env "staging" -}}
-          args: ["-c", "cp /etc/secrets-volume/env /code/mozillians/.env && /code/bin/run-dev-preview.sh"]
+          args: ["-c", "/code/bin/run-k8s.sh run-prod"]
           {{- else -}}
           args: ["-c", "/code/bin/run-dev-preview.sh"]
           {{- end }}

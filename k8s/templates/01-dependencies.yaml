@@ -24,11 +24,11 @@ spec:
           {{- else -}}
           imagePullPolicy: Always
           {{- end }}
-          {{ if eq .Values.env "staging" -}}
           command: ["/bin/sh"]
-          args: ["-c", "cp /etc/secrets-volume/env /code/mozillians/.env && /bin/sh /code/bin/run-celery.sh"]
+          {{ if eq .Values.env "staging" -}}
+          args: ["-c", "/code/bin/run-k8s.sh celery"]
           {{- else -}}
-          command: ['./bin/run-celery.sh']
+          args: ["-c", "/code/bin/run-celery.sh"]
           {{- end }}
           {{ if eq .Values.env "dev" -}}
           env:
@@ -78,10 +78,9 @@ spec:
           imagePullPolicy: Always
           {{- end }}
           {{ if eq .Values.env "staging" -}}
-          command: ["/bin/sh"]
-          args: ["-c", "cp /etc/secrets-volume/env /code/mozillians/.env && /bin/sh /code/bin/run-celery-beat.sh"]
+          args: ["-c", "/code/bin/run-k8s.sh celery-beat"]
           {{- else -}}
-          command: ['./bin/run-celery-beat.sh']
+          args: ["-c", "/code/bin/run-celery-beat.sh"]
           {{- end }}
           {{ if eq .Values.env "dev" -}}
           env:

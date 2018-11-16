@@ -30,7 +30,7 @@ spec:
           {{- else -}}
           args: ["-c", "/code/bin/run-celery.sh"]
           {{- end -}}
-          {{ if eq .Values.env "dev" -}}
+          {{ if eq .Values.env "dev" }}
           env:
             - name: C_FORCE_ROOT
               value: 'true'
@@ -83,7 +83,7 @@ spec:
           {{- else -}}
           args: ["-c", "/code/bin/run-celery-beat.sh"]
           {{- end -}}
-          {{ if eq .Values.env "dev" -}}
+          {{ if eq .Values.env "dev" }}
           env:
             - name: C_FORCE_ROOT
               value: 'true'

@@ -36,11 +36,6 @@ spec:
                 secretKeyRef:
                   name: oidc-proxy-secret
                   key: discovery_url
-            - name: discovery_url
-              valueFrom:
-                secretKeyRef:
-                  name: oidc-proxy-secret
-                  key: discovery_url
             - name: backend
               valueFrom:
                 secretKeyRef:
@@ -54,8 +49,8 @@ spec:
             - name: allowed_group
               valueFrom:
                 secretKeyRef:
-                  key: allowed_group
                   name: oidc-proxy-secret
+                  key: allowed_group
 
 ---
 apiVersion: v1
